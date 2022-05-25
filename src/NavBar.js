@@ -14,10 +14,12 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { useAlert } from "react-alert";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-const ResponsiveAppBar = ({ login }) => {
+const ResponsiveAppBar = ({ login, loginhandler, logouthandler }) => {
+  const alert = useAlert();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -139,6 +141,22 @@ const ResponsiveAppBar = ({ login }) => {
                       Transactions
                     </Button>
                   </Link>
+
+                  <Link
+                    to="/"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <Button
+                      key={Math.random()}
+                      onClick={() => {
+                        alert.show("Logged out successfully");
+                        logouthandler();
+                      }}
+                      sx={{ my: 2, color: "black", display: "block" }}
+                    >
+                      Logout
+                    </Button>
+                  </Link>
                 </>
               )}
             </Menu>
@@ -155,6 +173,7 @@ const ResponsiveAppBar = ({ login }) => {
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
+              fontSize: "initial",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -213,6 +232,19 @@ const ResponsiveAppBar = ({ login }) => {
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
                     Transactions
+                  </Button>
+                </Link>
+
+                <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+                  <Button
+                    key={Math.random()}
+                    onClick={() => {
+                      alert.show("Logged out successfully");
+                      logouthandler();
+                    }}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    Logout
                   </Button>
                 </Link>
               </>

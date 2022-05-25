@@ -209,6 +209,9 @@ const AddExpense = () => {
             <MenuItem value={"Office"}>Office</MenuItem>
           </Select>
         </Box>
+        {!categories.length > 0 && (
+          <p style={{ color: "red" }}>Please Add new Category</p>
+        )}
         <Box
           sx={{ display: "flex", flexDirection: "column", marginTop: "10px" }}
         >
@@ -216,13 +219,14 @@ const AddExpense = () => {
             Category
           </InputLabel>
           <Select
-            value={categories.map((ele) => ele.name)[0]}
+            value={val.categoryId}
             name="categoryId"
             onChange={changeHandler}
           >
-            {categories.map((ele) => (
-              <MenuItem value={ele._id}>{ele.name}</MenuItem>
-            ))}
+            {categories.length > 0 &&
+              categories.map((ele) => (
+                <MenuItem value={ele._id}>{ele.name}</MenuItem>
+              ))}
           </Select>
         </Box>
         <Button

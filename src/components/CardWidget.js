@@ -5,7 +5,7 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 
 const CardWidget = ({ title, amount }) => {
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", alignSelf: "center", gap: 4 }}>
       <Card sx={{ border: "1px solid #ccc" }}>
         <CardContent>
           <Box

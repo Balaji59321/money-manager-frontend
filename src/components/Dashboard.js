@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CardWidget from "./CardWidget";
 import DonutChart from "react-donut-chart";
+import { Doughnut } from "react-chartjs-2";
 import axios from "./../axios";
 import {
   Chart as ChartJS,
@@ -13,6 +14,8 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { Chart, ArcElement } from "chart.js";
+Chart.register(ArcElement);
 
 ChartJS.register(
   CategoryScale,
@@ -22,19 +25,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top",
-    },
-    title: {
-      display: true,
-      text: "Chart.js Bar Chart",
-    },
-  },
-};
 
 const labels = [
   "January",
@@ -51,6 +41,87 @@ const labels = [
   "December",
 ];
 
+export const chartColors = [
+  "#336699",
+  "#99CCFF",
+  "#999933",
+  "#666699",
+  "#CC9933",
+  "#006666",
+  "#3399FF",
+  "#993300",
+  "#CCCC99",
+  "#666666",
+  "#FFCC66",
+  "#6699CC",
+  "#663366",
+  "#9999CC",
+  "#CCCCCC",
+  "#669999",
+  "#CCCC66",
+  "#CC6600",
+  "#9999FF",
+  "#0066CC",
+  "#99CCCC",
+  "#999999",
+  "#FFCC00",
+  "#009999",
+  "#99CC33",
+  "#FF9900",
+  "#999966",
+  "#66CCCC",
+  "#339966",
+  "#CCCC33",
+  "#003f5c",
+  "#665191",
+  "#a05195",
+  "#d45087",
+  "#2f4b7c",
+  "#f95d6a",
+  "#ff7c43",
+  "#ffa600",
+  "#EF6F6C",
+  "#465775",
+  "#56E39F",
+  "#59C9A5",
+  "#5B6C5D",
+  "#0A2342",
+  "#2CA58D",
+  "#84BC9C",
+  "#CBA328",
+  "#F46197",
+  "#DBCFB0",
+  "#545775",
+];
+
+export const options = {
+  plugins: {
+    datalabels: {
+      display: false,
+    },
+  },
+  scales: {
+    x: {
+      grid: {
+        display: false,
+        drawBorder: false,
+      },
+      ticks: {
+        callback: () => "",
+      },
+    },
+    y: {
+      grid: {
+        display: false,
+        drawBorder: false,
+      },
+      ticks: {
+        callback: () => "",
+      },
+    },
+  },
+};
+
 const Dashboard = () => {
   const [expense, setExpense] = useState({
     income: 0,
@@ -63,6 +134,19 @@ const Dashboard = () => {
 
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
+
+  const data = {
+    maintainAspectRatio: false,
+    responsive: false,
+    labels: ["Expenditure", "Income"],
+    datasets: [
+      {
+        data: [expense.expenditure, expense.income],
+        backgroundColor: chartColors,
+        hoverBackgroundColor: chartColors,
+      },
+    ],
+  };
 
   const [month, setMonth] = useState({
     0: [{ income: 0, expense: 0 }],
@@ -80,70 +164,73 @@ const Dashboard = () => {
   });
 
   const groupData = (exp) => {
-    exp.map((ele) => {
-      ele.type === "Income"
-        ? setExpense((prev) => {
-            return { ...prev, income: +(+prev.income + +ele.amount) };
-          })
-        : setExpense((prev) => {
-            return {
-              ...prev,
-              expenditure: +(+prev.expenditure + +ele.amount),
-            };
-          });
-    });
-    console.log(exp);
-    exp.map((ele) => {
-      ele.expenseFor === "Personal"
-        ? setExpenseFor((prev) => {
-            return { ...prev, personal: +(+prev.personal + 1) };
-          })
-        : setExpenseFor((prev) => {
-            return {
-              ...prev,
-              office: +(+prev.office + 1),
-            };
-          });
-    });
+    exp.length > 0 &&
+      exp.map((ele) => {
+        ele.type === "Income"
+          ? setExpense((prev) => {
+              return { ...prev, income: +(+prev.income + +ele.amount) };
+            })
+          : setExpense((prev) => {
+              return {
+                ...prev,
+                expenditure: +(+prev.expenditure + +ele.amount),
+              };
+            });
+      });
+    exp.length > 0 &&
+      exp.map((ele) => {
+        ele.expenseFor === "Personal"
+          ? setExpenseFor((prev) => {
+              return { ...prev, personal: +(+prev.personal + 1) };
+            })
+          : setExpenseFor((prev) => {
+              return {
+                ...prev,
+                office: +(+prev.office + 1),
+              };
+            });
+      });
   };
 
   const groupDataByMonth = (exp) => {
-    exp.map((ele) => {
-      var curr_month = new Date(Date.parse(ele.createdAt)).getMonth();
-      if (ele.type === "Income") {
-        setMonth((prev) => {
-          return {
-            ...prev,
-            [curr_month]: [
-              {
-                income: +prev[curr_month][0]["income"] + +ele.amount,
-                expense: +prev[curr_month][0]["expense"],
-              },
-            ],
-          };
-        });
-      } else {
-        setMonth((prev) => {
-          return {
-            ...prev,
-            [curr_month]: [
-              {
-                income: +prev[curr_month][0]["income"],
-                expense: +prev[curr_month][0]["expense"] + +ele.amount,
-              },
-            ],
-          };
-        });
-      }
-    });
+    exp.length > 0 &&
+      exp.map((ele) => {
+        var curr_month = new Date(Date.parse(ele.createdAt)).getMonth();
+        if (ele.type === "Income") {
+          setMonth((prev) => {
+            return {
+              ...prev,
+              [curr_month]: [
+                {
+                  income: +prev[curr_month][0]["income"] + +ele.amount,
+                  expense: +prev[curr_month][0]["expense"],
+                },
+              ],
+            };
+          });
+        } else {
+          setMonth((prev) => {
+            return {
+              ...prev,
+              [curr_month]: [
+                {
+                  income: +prev[curr_month][0]["income"],
+                  expense: +prev[curr_month][0]["expense"] + +ele.amount,
+                },
+              ],
+            };
+          });
+        }
+      });
   };
 
   const groupTotal = (data) => {
-    data.map((ele) =>
-      ele.type === "Income"
-        ? setTotalIncome((prev) => prev + +ele.amount)
-        : setTotalExpense((prev) => prev + +ele.amount)
-    );
+    data.length > 0 &&
+      data.map((ele) =>
+        ele.type === "Income"
+          ? setTotalIncome((prev) => prev + +ele.amount)
+          : setTotalExpense((prev) => prev + +ele.amount)
+      );
   };
 
   useEffect(() => {
@@ -178,7 +265,7 @@ const Dashboard = () => {
         sx={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-evenly",
           flexDirection: {
             xs: "column",
             sm: "column",
@@ -195,40 +282,10 @@ const Dashboard = () => {
             flexDirection: "column",
             justifyContent: "center",
           }}
-          pl={3}
+          px={3}
         >
           <Typography variant="h6">Income vs Expenses (In Rupees)</Typography>
-          <DonutChart
-            data={[
-              {
-                label: "Expenditure",
-                value: expense.expenditure,
-              },
-              {
-                label: "Income",
-                value: expense.income,
-              },
-            ]}
-            colors={[
-              "#673ab7",
-              "#3f51b5",
-              "#2196f3",
-              "#03a9f4",
-              "#00bcd4",
-              "#009688",
-              "#4caf50",
-              "#8bc34a",
-              "#cddc39",
-              "#ffeb3b",
-              "#ffc107",
-              "#ff9800",
-              "#ff5722",
-              "#795548",
-              "#607d8b",
-            ]}
-            // height={{ xs: 500, md: 500, lg: "100%" }}
-            // width={{ xs: 500, md: 500, lg: "100%" }}
-          />
+          <Doughnut data={data} options={options} />
         </Box>
         <Box
           sx={{
@@ -237,22 +294,23 @@ const Dashboard = () => {
             flexDirection: "column",
             justifyContent: "center",
           }}
-          pr={3}
+          px={3}
         >
           <Typography variant="h6">Office vs Personal (Count)</Typography>
-          <DonutChart
-            data={[
-              {
-                label: "Personal",
-                value: expenseFor.personal,
-              },
-              {
-                label: "Office",
-                value: expenseFor.office,
-              },
-            ]}
-            // height={{ xs: 500, md: 500, lg: "100%" }}
-            // width={{ xs: 500, md: 500, lg: "100%" }}
+          <Doughnut
+            data={{
+              maintainAspectRatio: false,
+              responsive: false,
+              labels: ["Office", "Personal"],
+              datasets: [
+                {
+                  data: [expenseFor.office, expenseFor.personal],
+                  backgroundColor: chartColors,
+                  hoverBackgroundColor: chartColors,
+                },
+              ],
+            }}
+            options={options}
           />
         </Box>
       </Box>
@@ -263,12 +321,13 @@ const Dashboard = () => {
           flexDirection: "column",
           width: "80%",
           margin: "auto",
+          height: "60%",
         }}
         mt={2}
       >
         <Typography variant="h6">Expense based on Month</Typography>
         <Bar
-          options={options}
+          options={{}}
           data={{
             labels,
             datasets: [
