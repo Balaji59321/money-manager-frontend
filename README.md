@@ -5,7 +5,7 @@ https://money-manager-be.onrender.com
 https://money-manager-frontend-balaji.netlify.app/
 
 ## Project Description
-Webpage which can be used to capture and track all your expsense and expenditure on daily basis
+Manager for your expense / expenditure. Record your transactions and Plan Accordingly 
 
 ## Tech Stack Used
 React, CSS, Material-UI, Express, MongoDB
